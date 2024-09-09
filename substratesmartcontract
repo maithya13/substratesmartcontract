@@ -1,0 +1,51 @@
+#![cfg_attr(not(feature = "std"), no_std)]
+
+use ink::prelude::*;
+use ink::storage;
+
+#[ink::contract]
+mod incrementer {
+    #[ink(storage)]
+    pub struct Incrementer {
+        value: i32,
+    }
+
+    impl Incrementer {
+        /// Constructor that initializes the `value` to the given number.
+        #[ink(constructor)]
+        pub fn new(init_value: i32) -> Self {
+            Self { value: init_value }
+        }
+
+        /// Constructor that initializes the `value` to zero.
+        #[ink(constructor)]
+        pub fn default() -> Self {
+            Self::new(0)
+        }
+
+        /// A message that increments the stored value by the given amount.
+        #[ink(message)]
+        pub fn increment(&mut self, by: i32) {
+            self.value += by;
+        }
+
+        /// A message that returns the current value.
+        #[ink(message)]
+        pub fn get(&self) -> i32 {
+            self.value
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[ink::test]
+        fn it_works() {
+            let mut incrementer = Incrementer::new(5);
+            assert_eq!(incrementer.get(), 5);
+            incrementer.increment(10);
+            assert_eq!(incrementer.get(), 15);
+        }
+    }
+}
